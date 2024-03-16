@@ -408,10 +408,10 @@ Available options:
 }
 
 // src/index.ts
-var validator = {
+var StrValidator = {
   validateString,
   Utils: StringValidator
 };
 export {
-  validator as LEBIFY
+  StrValidator as LEBIFY_STR
 };
