@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="URL_TO_YOUR_IMAGE" alt="Logo" width="200">
+  <img src="https://raw.githubusercontent.com/daniseifeddine/Ds-Validator-Toolkit/main/media/logo.png" alt="Logo" width="450">
 </p>
 
 # Validator Toolkit
