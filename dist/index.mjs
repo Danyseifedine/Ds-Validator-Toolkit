@@ -406,12 +406,7 @@ Available options:
     validatedInput: modifiedName
   };
 }
-
-// src/index.ts
-var StrValidator = {
-  validateString,
-  Utils: StringValidator
-};
 export {
-  StrValidator as LEBIFY_STR
+  validateString as VALIDATE_STRING,
+  StringValidator as _STR_
 };

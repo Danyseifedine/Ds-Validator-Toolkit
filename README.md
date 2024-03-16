@@ -27,9 +27,9 @@ You can use Validator Toolkit directly in the browser without installing it:
 ```html
 <script type="module">
   // inporting package from the URL
-  import { LEBIFY_STR } from "https://unpkg.com/ds-validator-toolkit/dist/index.mjs";
+  import { VALIDATE_STRING } from "https://unpkg.com/ds-validator-toolkit/dist/index.mjs";
 
-  let name = LEBIFY_STR.validateString("Mareline", {
+  let name = VALIDATE_STRING.validateString("Mareline", {
     // options...
   });
 

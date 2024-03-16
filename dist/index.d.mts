@@ -324,9 +324,4 @@ declare class StringValidator {
     }): RegExp | null;
 }
 
-declare const StrValidator: {
-    validateString: typeof validateString;
-    Utils: typeof StringValidator;
-};
-
-export { StrValidator as LEBIFY_STR };
+export { validateString as VALIDATE_STRING, StringValidator as _STR_ };
