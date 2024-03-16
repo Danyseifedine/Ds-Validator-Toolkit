@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./media/logo.png" alt="Logo">
+  <img src="./media/logo.png" with="100px" alt="Logo">
 </p>
 
 # Validator Toolkit
