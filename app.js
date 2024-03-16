@@ -5,9 +5,9 @@ let a = _STR_.isRequired("", true)
 console.log(a)
 
 
-const name = "dany"
+const name = "dany DANY SSSS"
 let c = VALIDATE_STRING(name, {
-    blacklistWords: ['dany'],
+    wordSeparator: "000",
     blacklistWordsError: `cant contain the word ${name}`,
 })
 console.log(c)
