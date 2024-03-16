@@ -1,0 +1,22 @@
+{
+  "name": "ds-validator-toolkit",
+  "version": "1.0.10",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [
+    "validation",
+    "validator",
+    "ds"
+  ],
+  "author": "Dany seifeddine",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2"
+  }
+}
