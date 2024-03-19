@@ -157,6 +157,28 @@ console.log(result); // { isValid: false, message: "Name contains blacklisted wo
 
 The _STR_ class provides various functions for string validation, making it easy to perform specific checks on strings.
 
+## News
+
+-> adding VALIDTE*NUMBER function
+-> adding \_NUM* class
+
+available options:
+
+> isRequired,
+> maxValue,
+> minValue,
+> isInteger,
+> allowNegative = true,
+> allowPositive = true,
+> allowZero = true,
+
+# Future
+
+> allowDecimal
+> maxDecimalPlaces
+> minDecimalPlaces
+> allowExponent
+
 ## Validators
 
 Here is a list of the validators currently available.
@@ -165,3 +187,6 @@ Here is a list of the validators currently available.
 | --------------------------------------- | ----------------------------------------------- |
 | **VALIDATE_STRING(string, option= {})** | validate string based on built in option        |
 | **_STR_ : class**                       | a class that provide String validation function |
+|                                         |                                                 |
+| **VALIDATE_NUMBER(string, option= {})** | validate number based on built in option        |
+| **_NUM_ : class**                       | a class that provide number validation function |

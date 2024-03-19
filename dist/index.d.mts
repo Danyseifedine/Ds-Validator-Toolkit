@@ -5,16 +5,48 @@ interface LengthOptions {
     /**
      * The minimum length allowed for the string.
      */
-    minStringLength?: number;
+    minLength?: number;
     /**
      * The maximum length allowed for the string.
      */
-    maxStringLength?: number;
+    maxLength?: number;
 }
+/**
+ * Requirement option
+ */
+interface Requirement {
+    /**
+     * Indicates whether the input string is required (cannot be empty or null).
+     */
+    isRequired?: boolean;
+}
+/**
+ * Regex option
+ */
+interface Regex {
+    /**
+     * A regular expression pattern or identifier for predefined patterns to match against the input string.
+     */
+    regexPattern?: RegExp | string;
+}
+/**
+ * RESULT
+ */
+interface Result {
+    /**
+        * Indicates whether the input string is valid according to the validation rules.
+        */
+    isValid: boolean;
+    /**
+     * An error message describing why the input string is invalid, if applicable.
+     */
+    errorMessage?: string;
+}
+
 /**
  * Error messages that can be customized for different validation failures.
  */
-interface ErrorMessages {
+interface StringErrorMessage {
     /**
      * Error message for when the input is not a string.
      */
@@ -75,7 +107,7 @@ interface ErrorMessages {
 /**
  * Options for customizing the string validation behavior.
  */
-interface ValidatorOptions extends LengthOptions, ErrorMessages {
+interface StringValidatorOptions extends LengthOptions, StringErrorMessage, Regex, Requirement {
     /**
      * A function to perform custom validation on the input string.
      * @param input The input string to validate.
@@ -98,10 +130,6 @@ interface ValidatorOptions extends LengthOptions, ErrorMessages {
      * The minimum number of words required in the input string.
      */
     minWordsCount?: number;
-    /**
-     * Indicates whether the input string is required (cannot be empty or null).
-     */
-    isRequired?: boolean;
     /**
      * A pattern that the input string must start with.
      */
@@ -126,23 +154,11 @@ interface ValidatorOptions extends LengthOptions, ErrorMessages {
      * The maximum number of consecutive repetitive characters allowed in the input string.
      */
     maxRepetitiveCharsLimit?: number;
-    /**
-     * A regular expression pattern or identifier for predefined patterns to match against the input string.
-     */
-    regexPattern?: RegExp | string;
 }
 /**
  * Represents the result of string validation.
  */
-interface ValidationResult {
-    /**
-     * Indicates whether the input string is valid according to the validation rules.
-     */
-    isValid: boolean;
-    /**
-     * An error message describing why the input string is invalid, if applicable.
-     */
-    errorMessage?: string;
+interface StringValidationResult extends Result {
     /**
      * The validated input string after applying modifications or transformations, if any.
      */
@@ -210,12 +226,12 @@ interface ValidationResult {
  *
  * @property {string} [regexPatternError] - Error message for when the input does not match the specified regex pattern.
  */
-declare function validateString(name: unknown, options?: ValidatorOptions): ValidationResult;
+declare function validateString(name: unknown, options?: StringValidatorOptions): StringValidationResult;
 
 /**
  * Utility class for validating strings based on various criteria.
  */
-declare class StringValidator {
+declare class STR {
     /**
      * Checks if the given value is a string.
      * @param value The value to check.
@@ -223,12 +239,12 @@ declare class StringValidator {
      */
     static isString(value: unknown): value is string;
     /**
-     * Validates if a string is required based on the `isRequired` flag.
-     * @param value The string value to validate.
+     * Checks if a string is required and not empty.
+     * @param value The string value to check.
      * @param isRequired Indicates if the string is required.
      * @returns True if the string is required and not empty, or not required; false otherwise.
      */
-    static isRequired(value: string | undefined | null, isRequired: boolean): boolean;
+    static isStringRequired(value: string | undefined | null, isRequired: boolean): boolean;
     /**
      * Checks if the length of a string is at least as long as the specified minimum length.
      * @param value The string value to check.
@@ -312,16 +328,173 @@ declare class StringValidator {
      * @returns True if the string contains excessive repetitive characters, false otherwise.
      */
     static hasExcessiveRepetitiveChars(value: string, maxRepetitiveChars: number): boolean;
-    /**
-     * Handles predefined regex patterns by returning the corresponding RegExp object.
-     * @param regexPattern The regex pattern to handle, either a RegExp object or a string representing a predefined pattern.
-     * @param predefinedPatterns A dictionary containing predefined regex patterns.
-     * @returns The corresponding RegExp object if the pattern exists in the predefined patterns, or null otherwise.
-     * @throws Error if the specified regex pattern is a string but not found in the predefined patterns.
-     */
-    static handlePredefinedPattern(regexPattern: RegExp | string, predefinedPatterns: {
-        [key: string]: RegExp;
-    }): RegExp | null;
 }
 
-export { validateString as VALIDATE_STRING, StringValidator as _STR_ };
+declare class NUM {
+    /**
+     * Checks if the provided value is a number.
+     * @param value The value to check.
+     * @returns True if the value is a number, false otherwise.
+     */
+    static isNumber(value: unknown): value is number;
+    /**
+     * Checks if a numeric value is required based on the `isRequired` flag.
+     * @param value The numeric value to validate.
+     * @param isRequired Indicates if the numeric value is required.
+     * @returns True if the numeric value is required and not empty, or not required; false otherwise.
+     */
+    static isNumberRequired(value: number | undefined | null, isRequired: boolean): boolean;
+    /**
+     * Checks if a numeric value is greater than or equal to a minimum value.
+     * @param value The numeric value to check.
+     * @param minValue The minimum allowed value.
+     * @returns True if the value is greater than or equal to the minimum value, false otherwise.
+     */
+    static isMinValue(value: number, minValue: number): boolean;
+    /**
+     * Checks if a numeric value is less than or equal to a maximum value.
+     * @param value The numeric value to check.
+     * @param maxValue The maximum allowed value.
+     * @returns True if the value is less than or equal to the maximum value, false otherwise.
+     */
+    static isMaxValue(value: number, maxValue: number): boolean;
+    /**
+     * Checks if a numeric value is an integer.
+     * @param value The numeric value to check.
+     * @returns True if the value is an integer, false otherwise.
+     */
+    static isInteger(value: number, isInteger: boolean): boolean;
+    /**
+     * Checks if a numeric value is zero based on the allowZero flag.
+     * @param value The numeric value to check.
+     * @param allowZero Flag indicating whether zero is allowed.
+     * @returns True if the value is zero and zero is allowed, false otherwise.
+     */
+    static allowZero(value: number, allowZero?: boolean): boolean;
+    /**
+     * Checks if a numeric value is negative based on the allowNegative flag.
+     * @param value The numeric value to check.
+     * @param allowNegative Flag indicating whether negative numbers are allowed.
+     * @returns True if the value is negative and negative numbers are allowed, false otherwise.
+     */
+    static allowNegative(value: number, allowNegative?: boolean): boolean;
+    /**
+     * Checks if a numeric value is positive based on the allowPositive flag.
+     * @param value The numeric value to check.
+     * @param allowPositive Flag indicating whether positive numbers are allowed.
+     * @returns True if the value is positive and positive numbers are allowed, false otherwise.
+     */
+    static allowPositive(value: number, allowPositive?: boolean): boolean;
+}
+
+/**
+ * Error message for when a required number is not provided.
+ */
+interface NumberErrorMessage {
+    /**
+     * Error message for when a required number is not provided.
+     */
+    requiredError?: string;
+    /**
+     * Error message for when the number is below the minimum allowed value.
+     */
+    minValueError?: string;
+    /**
+     * Error message for when the number is above the maximum allowed value.
+     */
+    maxValueError?: string;
+    /**
+     * Error message for when the number is not an integer.
+     */
+    integerError?: string;
+    /**
+     * Error message for when the number is negative.
+     */
+    negativeError?: string;
+    /**
+     * Error message for when the number is positive.
+     */
+    positiveError?: string;
+    /**
+     * Error message for when the number is zero.
+     */
+    zeroError?: string;
+}
+/**
+ * Options for validating numeric values.
+ */
+interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
+    /**
+     * The minimum allowed numeric value.
+     */
+    minValue?: number;
+    /**
+     * The maximum allowed numeric value.
+     */
+    maxValue?: number;
+    /**
+     * Indicates whether the numeric value must be an integer.
+     */
+    isInteger?: boolean;
+    /**
+     * Indicates whether negative numeric values are allowed.
+     */
+    allowNegative?: boolean;
+    /**
+     * Indicates whether positive numeric values are allowed.
+     */
+    allowPositive?: boolean;
+    /**
+     * Indicates whether the numeric value zero is allowed.
+     */
+    allowZero?: boolean;
+}
+/**
+ * Represents the result of numeric value validation.
+ */
+interface NumberValidationResult extends Result {
+    /**
+     * The validated numeric value.
+     */
+    returnedNumber?: number;
+}
+
+/**
+ * Validates a numeric value based on specified options.
+ * @param {number} value - The numeric value to validate.
+ *
+ * @param {NumberValidatorOptions} [options={}] - Validation options.
+ *
+ * @property {boolean} [isRequired=true] - Indicates if the number is required.
+ *
+ * @property {number} [minValue=Infinity] - The minimum allowed numeric value.
+ *
+ * @property {number} [maxValue=Infinity] - The maximum allowed numeric value.
+ *
+ * @property {boolean} [isInteger=false] - Indicates if the number must be an integer.
+ *
+ * @property {boolean} [allowNegative=true] - Indicates if negative numbers are allowed.
+ *
+ * @property {boolean} [allowPositive=true] - Indicates if positive numbers are allowed.
+ *
+ * @property {boolean} [allowZero=true] - Indicates if zero is allowed.
+ *
+ * @property {string} [requiredError] - Error message for when a required number is not provided.
+ *
+ * @property {string} [minValueError] - Error message for when the number is below the minimum allowed value.
+ *
+ * @property {string} [maxValueError] - Error message for when the number is above the maximum allowed value.
+ *
+ * @property {string} [integerError] - Error message for when the number is not an integer.
+ *
+ * @property {string} [negativeError] - Error message for when a negative number is not allowed.
+ *
+ * @property {string} [positiveError] - Error message for when a positive number is not allowed.
+ *
+ * @property {string} [zeroError] - Error message for when zero is not allowed.
+ *
+ * @returns {NumberValidationResult} The validation result.
+ */
+declare function validateNumber(value: number, options?: NumberValidatorOptions): NumberValidationResult;
+
+export { validateNumber as VALIDATE_NUMBER, validateString as VALIDATE_STRING, NUM as _NUM_, STR as _STR_ };

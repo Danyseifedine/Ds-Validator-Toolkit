@@ -1,4 +1,4 @@
-// src/validators/regex/regex.ts
+// src/utils/regex/regex.ts
 var predefinedPatterns = {
   LETTERS_ONLY: /^[A-Za-z]+$/,
   LETTERS_WITH_SPACES: /^[A-Za-z\s]+$/,
@@ -38,8 +38,8 @@ var predefinedPatterns = {
   HTML_STYLE_TAG: /<style[^>]*>[\s\S]*?<\/style>/i
 };
 
-// src/utils/utils.ts
-var StringValidator = class {
+// src/utils/string/str.ts
+var STR = class {
   /**
    * Checks if the given value is a string.
    * @param value The value to check.
@@ -49,12 +49,12 @@ var StringValidator = class {
     return typeof value === "string";
   }
   /**
-   * Validates if a string is required based on the `isRequired` flag.
-   * @param value The string value to validate.
+   * Checks if a string is required and not empty.
+   * @param value The string value to check.
    * @param isRequired Indicates if the string is required.
    * @returns True if the string is required and not empty, or not required; false otherwise.
    */
-  static isRequired(value, isRequired) {
+  static isStringRequired(value, isRequired) {
     if (isRequired) {
       return value !== void 0 && value !== null && value.trim() !== "";
     } else {
@@ -190,22 +190,17 @@ var StringValidator = class {
     }
     return false;
   }
-  /**
-   * Handles predefined regex patterns by returning the corresponding RegExp object.
-   * @param regexPattern The regex pattern to handle, either a RegExp object or a string representing a predefined pattern.
-   * @param predefinedPatterns A dictionary containing predefined regex patterns.
-   * @returns The corresponding RegExp object if the pattern exists in the predefined patterns, or null otherwise.
-   * @throws Error if the specified regex pattern is a string but not found in the predefined patterns.
-   */
-  static handlePredefinedPattern(regexPattern, predefinedPatterns2) {
-    if (typeof regexPattern === "string" && predefinedPatterns2[regexPattern]) {
-      return predefinedPatterns2[regexPattern];
-    } else if (typeof regexPattern === "string" && !predefinedPatterns2[regexPattern]) {
-      throw new Error(`The regex pattern '${regexPattern}' is not available in the predefined patterns.`);
-    }
-    return regexPattern instanceof RegExp ? regexPattern : null;
-  }
 };
+
+// src/utils/utils.ts
+function handlePredefinedPattern(regexPattern, predefinedPatterns2) {
+  if (typeof regexPattern === "string" && predefinedPatterns2[regexPattern]) {
+    return predefinedPatterns2[regexPattern];
+  } else if (typeof regexPattern === "string" && !predefinedPatterns2[regexPattern]) {
+    throw new Error(`The regex pattern '${regexPattern}' is not available in the predefined patterns.`);
+  }
+  return regexPattern instanceof RegExp ? regexPattern : null;
+}
 
 // src/validators/string-validator.ts
 function validateString(name, options = {}) {
@@ -213,9 +208,9 @@ function validateString(name, options = {}) {
     // Indicates whether the string is required.
     isRequired = true,
     // The minimum allowed length of the string.
-    minStringLength,
+    minLength,
     // The maximum allowed length of the string.
-    maxStringLength,
+    maxLength,
     // An array of allowed characters.
     allowedChars,
     // An array of disallowed characters.
@@ -271,8 +266,8 @@ function validateString(name, options = {}) {
   } = options;
   const validOptions = {
     isRequired: true,
-    minStringLength: void 0,
-    maxStringLength: void 0,
+    minLength: void 0,
+    maxLength: void 0,
     allowedChars: void 0,
     disallowedChars: void 0,
     blacklistWords: void 0,
@@ -300,7 +295,7 @@ function validateString(name, options = {}) {
     maxRepetitiveCharsError,
     regexPatternError
   };
-  if (!StringValidator.isString(name)) {
+  if (!STR.isString(name)) {
     return {
       isValid: false,
       errorMessage: isStringError || "Name must be a string"
@@ -315,32 +310,32 @@ function validateString(name, options = {}) {
 Available options:
 - ${availableOptions}`);
   }
-  const trimmedName = StringValidator.trimString(name);
+  const trimmedName = STR.trimString(name);
   let modifiedName = trimmedName.replace(/\s+/g, wordSeparator);
   let updatedRegexPattern = null;
   if (regexPattern) {
-    updatedRegexPattern = StringValidator.handlePredefinedPattern(regexPattern, predefinedPatterns);
+    updatedRegexPattern = handlePredefinedPattern(regexPattern, predefinedPatterns);
   }
   const validationRules = [
     // Check if name is required
     {
-      condition: isRequired && !StringValidator.isRequired(trimmedName, isRequired),
+      condition: isRequired && !STR.isStringRequired(trimmedName, isRequired),
       message: isRequiredError || "Name is required"
     },
     // Check for allowed characters
     {
-      condition: allowedChars && !StringValidator.containsAllowedChar(trimmedName, allowedChars),
+      condition: allowedChars && !STR.containsAllowedChar(trimmedName, allowedChars),
       message: allowedCharsError || "Name contains disallowed characters"
     },
     // Check for minimum string length
     {
-      condition: minStringLength && !StringValidator.isStringLengthAtLeast(trimmedName, minStringLength),
-      message: lengthError || `Name must be at least ${minStringLength} characters long`
+      condition: minLength && !STR.isStringLengthAtLeast(trimmedName, minLength),
+      message: lengthError || `Name must be at least ${minLength} characters long`
     },
     // Check for maximum string length
     {
-      condition: maxStringLength && !StringValidator.isStringLengthAtMost(trimmedName, maxStringLength),
-      message: lengthError || `Name must be at most ${maxStringLength} characters long`
+      condition: maxLength && !STR.isStringLengthAtMost(trimmedName, maxLength),
+      message: lengthError || `Name must be at most ${maxLength} characters long`
     },
     // Check against custom regex pattern
     {
@@ -349,7 +344,7 @@ Available options:
     },
     // Check for disallowed characters
     {
-      condition: disallowedChars && StringValidator.containsDisallowedChar(trimmedName, disallowedChars),
+      condition: disallowedChars && STR.containsDisallowedChar(trimmedName, disallowedChars),
       message: disallowedCharsError || "Name contains disallowed characters"
     },
     // Custom validation function
@@ -359,37 +354,37 @@ Available options:
     },
     // Check for blacklisted words
     {
-      condition: blacklistWords && StringValidator.containsBlacklistedWord(trimmedName, blacklistWords),
+      condition: blacklistWords && STR.containsBlacklistedWord(trimmedName, blacklistWords),
       message: blacklistWordsError || "Name contains blacklisted words"
     },
     // Check if name starts with specified pattern
     {
-      condition: startsWithPattern && !StringValidator.doesStringStartsWith(trimmedName, startsWithPattern),
+      condition: startsWithPattern && !STR.doesStringStartsWith(trimmedName, startsWithPattern),
       message: startsWithError || `Name must start with ${startsWithPattern}`
     },
     // Check if name ends with specified pattern
     {
-      condition: endsWithPattern && !StringValidator.doesStringEndsWith(trimmedName, endsWithPattern),
+      condition: endsWithPattern && !STR.doesStringEndsWith(trimmedName, endsWithPattern),
       message: endsWithError || `Name must end with '${endsWithPattern}'`
     },
     // Check if spaces are allowed in the name
     {
-      condition: !StringValidator.isSpacesAllowed(trimmedName, allowSpaces),
+      condition: !STR.isSpacesAllowed(trimmedName, allowSpaces),
       message: allowedSpacesError || "Spaces are not allowed in the name"
     },
     // Check if word count is above the threshold
     {
-      condition: minWordsCount && !StringValidator.isWordCountAboveThreshold(trimmedName, minWordsCount),
+      condition: minWordsCount && !STR.isWordCountAboveThreshold(trimmedName, minWordsCount),
       message: minWordsError || `Name must contain at least ${minWordsCount} words`
     },
     // Check if word count is below the threshold
     {
-      condition: maxWordsCount && !StringValidator.isWordCountBelowThreshold(trimmedName, maxWordsCount),
-      message: maxWordsError || `Name must contain at most ${maxStringLength} words`
+      condition: maxWordsCount && !STR.isWordCountBelowThreshold(trimmedName, maxWordsCount),
+      message: maxWordsError || `Name must contain at most ${maxLength} words`
     },
     // Check for excessive repetitive characters
     {
-      condition: StringValidator.hasExcessiveRepetitiveChars(trimmedName, maxRepetitiveCharsLimit),
+      condition: STR.hasExcessiveRepetitiveChars(trimmedName, maxRepetitiveCharsLimit),
       message: maxRepetitiveCharsError || `Name contains consecutive repetitive characters exceeding the limit of ${maxRepetitiveCharsLimit}`
     }
   ];
@@ -406,7 +401,181 @@ Available options:
     validatedInput: modifiedName
   };
 }
+
+// src/utils/number/num.ts
+var NUM = class {
+  /**
+   * Checks if the provided value is a number.
+   * @param value The value to check.
+   * @returns True if the value is a number, false otherwise.
+   */
+  static isNumber(value) {
+    return typeof value === "number";
+  }
+  /**
+   * Checks if a numeric value is required based on the `isRequired` flag.
+   * @param value The numeric value to validate.
+   * @param isRequired Indicates if the numeric value is required.
+   * @returns True if the numeric value is required and not empty, or not required; false otherwise.
+   */
+  static isNumberRequired(value, isRequired) {
+    if (isRequired) {
+      return value !== void 0 && value !== null;
+    } else {
+      return true;
+    }
+  }
+  /**
+   * Checks if a numeric value is greater than or equal to a minimum value.
+   * @param value The numeric value to check.
+   * @param minValue The minimum allowed value.
+   * @returns True if the value is greater than or equal to the minimum value, false otherwise.
+   */
+  static isMinValue(value, minValue) {
+    return value >= minValue;
+  }
+  /**
+   * Checks if a numeric value is less than or equal to a maximum value.
+   * @param value The numeric value to check.
+   * @param maxValue The maximum allowed value.
+   * @returns True if the value is less than or equal to the maximum value, false otherwise.
+   */
+  static isMaxValue(value, maxValue) {
+    return value <= maxValue;
+  }
+  /**
+   * Checks if a numeric value is an integer.
+   * @param value The numeric value to check.
+   * @returns True if the value is an integer, false otherwise.
+   */
+  static isInteger(value, isInteger) {
+    return isInteger ? Number.isInteger(value) : !Number.isInteger(value);
+  }
+  /**
+   * Checks if a numeric value is zero based on the allowZero flag.
+   * @param value The numeric value to check.
+   * @param allowZero Flag indicating whether zero is allowed.
+   * @returns True if the value is zero and zero is allowed, false otherwise.
+   */
+  static allowZero(value, allowZero = true) {
+    return allowZero ? true : value !== 0;
+  }
+  /**
+   * Checks if a numeric value is negative based on the allowNegative flag.
+   * @param value The numeric value to check.
+   * @param allowNegative Flag indicating whether negative numbers are allowed.
+   * @returns True if the value is negative and negative numbers are allowed, false otherwise.
+   */
+  static allowNegative(value, allowNegative = true) {
+    return allowNegative ? true : value >= 0;
+  }
+  /**
+   * Checks if a numeric value is positive based on the allowPositive flag.
+   * @param value The numeric value to check.
+   * @param allowPositive Flag indicating whether positive numbers are allowed.
+   * @returns True if the value is positive and positive numbers are allowed, false otherwise.
+   */
+  static allowPositive(value, allowPositive = true) {
+    return allowPositive ? true : value <= 0;
+  }
+};
+
+// src/validators/number-validator.ts
+function validateNumber(value, options = {}) {
+  const {
+    isRequired,
+    maxValue,
+    minValue,
+    isInteger,
+    allowNegative = true,
+    allowPositive = true,
+    allowZero = true,
+    // Error messages
+    requiredError,
+    minValueError,
+    maxValueError,
+    negativeError,
+    positiveError,
+    integerError,
+    zeroError
+  } = options;
+  const validOptions = {
+    isRequired: true,
+    minValue: Infinity,
+    maxValue: Infinity,
+    isInteger: false,
+    allowNegative: true,
+    allowPositive: true,
+    allowZero: true,
+    requiredError,
+    minValueError,
+    maxValueError,
+    negativeError,
+    positiveError,
+    integerError,
+    zeroError
+  };
+  if (!NUM.isNumber(value)) {
+    return {
+      isValid: false,
+      errorMessage: "Value must be a number."
+    };
+  }
+  const invalidOptions = Object.keys(options).filter((key) => !(key in validOptions));
+  if (invalidOptions.length > 0) {
+    const availableOptions = Object.keys(validOptions).join("\n- ");
+    throw new Error(`Invalid option(s):
+- ${invalidOptions.join("\n- ")}
+
+Available options:
+- ${availableOptions}`);
+  }
+  const validationRules = [
+    {
+      condition: isRequired && !NUM.isNumberRequired(value, isRequired),
+      message: requiredError || "Number is required"
+    },
+    {
+      condition: minValue !== void 0 && !NUM.isMinValue(value, minValue),
+      message: minValueError || "Number should not be less than the minimum value"
+    },
+    {
+      condition: maxValue !== void 0 && !NUM.isMaxValue(value, maxValue),
+      message: maxValueError || "Number should not exceed the maximum value"
+    },
+    {
+      condition: isInteger && !NUM.isInteger(value, isInteger),
+      message: integerError || "Number should be an integer"
+    },
+    {
+      condition: !NUM.allowNegative(value, allowNegative),
+      message: negativeError || "Negative numbers are not allowed"
+    },
+    {
+      condition: !NUM.allowZero(value, allowZero),
+      message: zeroError || "Zero is not allowed"
+    },
+    {
+      condition: !NUM.allowPositive(value, allowPositive),
+      message: positiveError || "Positive numbers are not allowed"
+    }
+  ];
+  for (const rule of validationRules) {
+    if (rule.condition) {
+      return {
+        isValid: false,
+        errorMessage: rule.message
+      };
+    }
+  }
+  return {
+    isValid: true,
+    returnedNumber: value
+  };
+}
 export {
+  validateNumber as VALIDATE_NUMBER,
   validateString as VALIDATE_STRING,
-  StringValidator as _STR_
+  NUM as _NUM_,
+  STR as _STR_
 };
