@@ -159,8 +159,8 @@ The _STR_ class provides various functions for string validation, making it easy
 
 ## News
 
--> adding VALIDTE*NUMBER function
--> adding \_NUM* class
+> adding VALIDTE*NUMBER function
+> adding \_NUM* class
 
 available options:
 
@@ -174,10 +174,10 @@ available options:
 
 # Future
 
-> allowDecimal
-> maxDecimalPlaces
-> minDecimalPlaces
-> allowExponent
+> allowDecimal,
+> maxDecimalPlaces,
+> minDecimalPlaces,
+> allowExponent,
 
 ## Validators
 
