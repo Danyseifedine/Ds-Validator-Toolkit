@@ -157,10 +157,7 @@ console.log(result); // { isValid: false, message: "Name contains blacklisted wo
 
 The _STR_ class provides various functions for string validation, making it easy to perform specific checks on strings.
 
-## News
-
-> adding VALIDTE*NUMBER function
-> adding \_NUM* class
+## What's New
 
 available options:
 
@@ -171,13 +168,17 @@ available options:
 > allowNegative = true,
 > allowPositive = true,
 > allowZero = true,
+> onlyDecimal,
+> maxDecimalPlaces,
+> minDecimalPlaces,
+> allowExponent
 
 # Future
 
-> allowDecimal,
-> maxDecimalPlaces,
-> minDecimalPlaces,
-> allowExponent,
+> allowHexadecimal - Allows hexadecimal numeric values (e.g., 0xFF).
+> allowBinary - Allows binary numeric values (e.g., 0b101010).
+> allowOctal - Allows octal numeric values (e.g., 0o744).
+> allowThousandSeparator - Allows the use of a thousands separator (e.g., 1,000,000).
 
 ## Validators
 

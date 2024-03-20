@@ -385,6 +385,34 @@ declare class NUM {
      * @returns True if the value is positive and positive numbers are allowed, false otherwise.
      */
     static allowPositive(value: number, allowPositive?: boolean): boolean;
+    /**
+     * Checks if a numeric value must have a decimal component based on the allowDecimal flag.
+     * @param value The numeric value to check.
+     * @param allowDecimal Flag indicating whether a decimal component is required.
+     * @returns True if the value has a decimal component and it's required, false otherwise.
+     */
+    static mustHaveDecimal(value: number, allowDecimal?: boolean): boolean;
+    /**
+     * Checks if the number of decimal places in a numeric value exceeds the specified maximum.
+     * @param value The numeric value to check.
+     * @param maxDecimalPlaces The maximum number of decimal places allowed.
+     * @returns True if the number of decimal places does not exceed the maximum, false otherwise.
+     */
+    static isValidMaxDecimalPlaces(value: number, maxDecimalPlaces: number): boolean;
+    /**
+     * Checks if the number of decimal places in a numeric value meets the specified minimum.
+     * @param value The numeric value to check.
+     * @param minDecimalPlaces The minimum number of decimal places allowed.
+     * @returns True if the number of decimal places meets or exceeds the minimum, false otherwise.
+     */
+    static isValidMinDecimalPlaces(value: number, minDecimalPlaces: number): boolean;
+    /**
+     * Checks if a numeric value is in scientific notation.
+     * @param value The numeric value to check.
+     * @param allowExponent Flag indicating whether scientific notation is allowed.
+     * @returns True if the value is in scientific notation and allowed, false otherwise.
+     */
+    static allowExponent(value: number, allowExponent: boolean): boolean;
 }
 
 /**
@@ -419,6 +447,22 @@ interface NumberErrorMessage {
      * Error message for when the number is zero.
      */
     zeroError?: string;
+    /**
+     * Error message for when a decimal value is not provided.
+     */
+    decimalError?: string;
+    /**
+     * Error message for when the provided value exceeds the maximum allowed decimal places.
+     */
+    maxDecimalError?: string;
+    /**
+     * Error message for when the provided value does not meet the minimum required decimal places.
+     */
+    minDecimalError?: string;
+    /**
+     * Error message for when scientific notation (exponent) is not allowed but present in the value.
+     */
+    exponentError?: string;
 }
 /**
  * Options for validating numeric values.
@@ -448,6 +492,22 @@ interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
      * Indicates whether the numeric value zero is allowed.
      */
     allowZero?: boolean;
+    /**
+     * Indicates whether decimal values are allowed.
+     */
+    onlyDecimal?: boolean;
+    /**
+     * The maximum number of decimal places allowed.
+     */
+    maxDecimalPlaces?: number;
+    /**
+     * The minimum number of decimal places required.
+     */
+    minDecimalPlaces?: number;
+    /**
+     * Indicates whether scientific notation (exponent) is allowed.
+     */
+    allowExponent?: boolean;
 }
 /**
  * Represents the result of numeric value validation.
@@ -479,6 +539,14 @@ interface NumberValidationResult extends Result {
  *
  * @property {boolean} [allowZero=true] - Indicates if zero is allowed.
  *
+ * @property {number} [maxDecimalPlaces] - The maximum number of decimal places allowed.
+ *
+ * @property {number} [minDecimalPlaces] - The minimum number of decimal places required.
+ *
+ * @property {boolean} [onlyDecimal] - Flag indicating whether decimal numbers are allowed.
+ *
+ * @property {boolean} [allowExponent] - Flag indicating whether scientific notation is allowed.
+ *
  * @property {string} [requiredError] - Error message for when a required number is not provided.
  *
  * @property {string} [minValueError] - Error message for when the number is below the minimum allowed value.
@@ -492,6 +560,12 @@ interface NumberValidationResult extends Result {
  * @property {string} [positiveError] - Error message for when a positive number is not allowed.
  *
  * @property {string} [zeroError] - Error message for when zero is not allowed.
+ *
+ * @property {string} [decimalError] - Error message for when a numeric value is not a decimal number.
+ *
+ * @property {string} [maxDecimalError] - Error message for when a numeric value exceeds the maximum allowed decimal places.
+ *
+ * @property {string} [minDecimalError] - Error message for when a numeric value falls below the minimum required decimal places.
  *
  * @returns {NumberValidationResult} The validation result.
  */

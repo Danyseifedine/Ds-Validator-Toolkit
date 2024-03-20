@@ -478,18 +478,73 @@ var NUM = class {
   static allowPositive(value, allowPositive = true) {
     return allowPositive ? true : value <= 0;
   }
+  /**
+   * Checks if a numeric value must have a decimal component based on the allowDecimal flag.
+   * @param value The numeric value to check.
+   * @param allowDecimal Flag indicating whether a decimal component is required.
+   * @returns True if the value has a decimal component and it's required, false otherwise.
+   */
+  static mustHaveDecimal(value, allowDecimal = false) {
+    if (allowDecimal) {
+      return Number.isInteger(value) === false;
+    }
+    return true;
+  }
+  /**
+   * Checks if the number of decimal places in a numeric value exceeds the specified maximum.
+   * @param value The numeric value to check.
+   * @param maxDecimalPlaces The maximum number of decimal places allowed.
+   * @returns True if the number of decimal places does not exceed the maximum, false otherwise.
+   */
+  static isValidMaxDecimalPlaces(value, maxDecimalPlaces) {
+    const decimalPortion = value.toString().split(".")[1];
+    if (!decimalPortion) {
+      return true;
+    }
+    return decimalPortion.length <= maxDecimalPlaces;
+  }
+  /**
+   * Checks if the number of decimal places in a numeric value meets the specified minimum.
+   * @param value The numeric value to check.
+   * @param minDecimalPlaces The minimum number of decimal places allowed.
+   * @returns True if the number of decimal places meets or exceeds the minimum, false otherwise.
+   */
+  static isValidMinDecimalPlaces(value, minDecimalPlaces) {
+    const decimalPortion = value.toString().split(".")[1];
+    if (!decimalPortion) {
+      return false;
+    }
+    return decimalPortion.length >= minDecimalPlaces;
+  }
+  /**
+   * Checks if a numeric value is in scientific notation.
+   * @param value The numeric value to check.
+   * @param allowExponent Flag indicating whether scientific notation is allowed.
+   * @returns True if the value is in scientific notation and allowed, false otherwise.
+   */
+  static allowExponent(value, allowExponent) {
+    if (allowExponent) {
+      return /\d+\.?\d*e[+-]?\d+/i.test(value.toString());
+    } else {
+      return !/\d+\.?\d*e[+-]?\d+/i.test(value.toString());
+    }
+  }
 };
 
 // src/validators/number-validator.ts
 function validateNumber(value, options = {}) {
   const {
-    isRequired,
+    isRequired = true,
     maxValue,
     minValue,
-    isInteger,
+    isInteger = false,
     allowNegative = true,
     allowPositive = true,
     allowZero = true,
+    onlyDecimal = false,
+    maxDecimalPlaces = Infinity,
+    minDecimalPlaces,
+    allowExponent = true,
     // Error messages
     requiredError,
     minValueError,
@@ -497,23 +552,35 @@ function validateNumber(value, options = {}) {
     negativeError,
     positiveError,
     integerError,
-    zeroError
+    zeroError,
+    decimalError,
+    maxDecimalError,
+    minDecimalError,
+    exponentError
   } = options;
   const validOptions = {
     isRequired: true,
-    minValue: Infinity,
-    maxValue: Infinity,
+    minValue,
+    maxValue,
     isInteger: false,
     allowNegative: true,
     allowPositive: true,
     allowZero: true,
+    onlyDecimal: false,
+    maxDecimalPlaces: Infinity,
+    minDecimalPlaces,
+    allowExponent: true,
     requiredError,
     minValueError,
     maxValueError,
     negativeError,
     positiveError,
     integerError,
-    zeroError
+    zeroError,
+    decimalError,
+    maxDecimalError,
+    minDecimalError,
+    exponentError
   };
   if (!NUM.isNumber(value)) {
     return {
@@ -558,6 +625,22 @@ Available options:
     {
       condition: !NUM.allowPositive(value, allowPositive),
       message: positiveError || "Positive numbers are not allowed"
+    },
+    {
+      condition: onlyDecimal && !NUM.mustHaveDecimal(value, onlyDecimal),
+      message: decimalError || "Decimals aren't allowed"
+    },
+    {
+      condition: !NUM.isValidMaxDecimalPlaces(value, maxDecimalPlaces),
+      message: maxDecimalError || "Too many decimal places provided."
+    },
+    {
+      condition: minDecimalPlaces && !NUM.isValidMinDecimalPlaces(value, minDecimalPlaces),
+      message: minDecimalError || "Not enough decimal places provided."
+    },
+    {
+      condition: NUM.allowExponent(value, allowExponent),
+      message: exponentError || "Exponent not allowed"
     }
   ];
   for (const rule of validationRules) {
