@@ -28,6 +28,10 @@ interface Regex {
      * A regular expression pattern or identifier for predefined patterns to match against the input string.
      */
     regexPattern?: RegExp | string;
+    /**
+     * Error message for when the input does not match the specified regex pattern.
+     */
+    regexPatternError?: string;
 }
 /**
  * RESULT
@@ -42,6 +46,21 @@ interface Result {
      */
     errorMessage?: string;
 }
+/**
+ * Custom validation
+ */
+interface Custom {
+    /**
+     * A function to perform custom validation on the input string.
+     * @param input The input string to validate.
+     * @returns true if the input is considered valid; otherwise, false.
+     */
+    customValidationFn?: (input: any) => boolean;
+    /**
+     * Error message for when custom validation fails.
+     */
+    customError?: string;
+}
 
 /**
  * Error messages that can be customized for different validation failures.
@@ -55,10 +74,6 @@ interface StringErrorMessage {
      * Error message for when the input string length does not meet the requirements.
      */
     lengthError?: string;
-    /**
-     * Error message for when custom validation fails.
-     */
-    customError?: string;
     /**
      * Error message for when the input contains disallowed characters.
      */
@@ -99,21 +114,11 @@ interface StringErrorMessage {
      * Error message for when the input contains consecutive repetitive characters exceeding the limit.
      */
     maxRepetitiveCharsError?: string;
-    /**
-     * Error message for when the input does not match the specified regex pattern.
-     */
-    regexPatternError?: string;
 }
 /**
  * Options for customizing the string validation behavior.
  */
-interface StringValidatorOptions extends LengthOptions, StringErrorMessage, Regex, Requirement {
-    /**
-     * A function to perform custom validation on the input string.
-     * @param input The input string to validate.
-     * @returns true if the input is considered valid; otherwise, false.
-     */
-    customValidationFn?: (input: string) => boolean;
+interface StringValidatorOptions extends LengthOptions, StringErrorMessage, Regex, Requirement, Custom {
     /**
      * An array of allowed characters for the input string.
      */
@@ -481,7 +486,7 @@ interface NumberErrorMessage {
 /**
  * Options for validating numeric values.
  */
-interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
+interface NumberValidatorOptions extends Requirement, NumberErrorMessage, Custom {
     /**
      * The minimum allowed numeric value.
      */
@@ -571,6 +576,10 @@ interface NumberValidationResult extends Result {
  *
  * @property {boolean} [thousandSeparator] - Flag indicating whether thousand seperated number are allowed
  *
+ * @property {boolean} [customThousandSeparator] - A seperator string for custom thousand separator
+ *
+ * @property {Function} [customValidationFn] - A custom validation function.
+ *
  * @property {string} [requiredError] - Error message for when a required number is not provided.
  *
  * @property {string} [minValueError] - Error message for when the number is below the minimum allowed value.
@@ -592,6 +601,8 @@ interface NumberValidationResult extends Result {
  * @property {string} [minDecimalError] - Error message for when a numeric value falls below the minimum required decimal places.
  *
  * @property {string} [binaryError] - Error message for when a numeric value is not a binary number.
+ *
+ * @property {string} [customError] - Error message for when custom validation fails.
  *
  * @returns {NumberValidationResult} The validation result.
  */

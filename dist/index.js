@@ -159,7 +159,7 @@ var STR = class {
    * @returns True if the string starts with the prefix, false otherwise.
    */
   static doesStringStartsWith(value, prefix) {
-    return prefix ? value.startsWith(prefix) : true;
+    return prefix !== void 0 ? value.startsWith(prefix) : false;
   }
   /**
    * Checks if a string ends with the specified suffix.
@@ -168,7 +168,7 @@ var STR = class {
    * @returns True if the string ends with the suffix, false otherwise.
    */
   static doesStringEndsWith(value, suffix) {
-    return suffix ? value.endsWith(suffix) : true;
+    return suffix !== void 0 ? value.endsWith(suffix) : false;
   }
   /**
    * Checks if spaces are allowed in the string.
@@ -186,6 +186,9 @@ var STR = class {
    * @returns True if the word count in the string is above the threshold, false otherwise.
    */
   static isWordCountAboveThreshold(value, minWords) {
+    if (!value.trim()) {
+      return false;
+    }
     const words = value.trim().split(/\s+/);
     return words.length >= minWords;
   }
@@ -588,6 +591,7 @@ var NUM = class {
 // src/validators/number-validator.ts
 function validateNumber(value, options = {}) {
   const {
+    customValidationFn,
     isRequired = true,
     maxValue,
     minValue,
@@ -612,9 +616,11 @@ function validateNumber(value, options = {}) {
     decimalError,
     maxDecimalError,
     minDecimalError,
-    binaryError
+    binaryError,
+    customError
   } = options;
   const validOptions = {
+    customValidationFn,
     isRequired: true,
     minValue,
     maxValue,
@@ -637,7 +643,8 @@ function validateNumber(value, options = {}) {
     zeroError,
     decimalError,
     maxDecimalError,
-    minDecimalError
+    minDecimalError,
+    customError
   };
   if (!NUM.isNumber(value)) {
     return {
@@ -704,6 +711,10 @@ Available options:
     },
     {
       condition: customThousandSeperator && !NUM.customThousandSeparator(value, customThousandSeperator)
+    },
+    {
+      condition: customValidationFn && !customValidationFn(value),
+      message: customError || "Custom validation failed"
     }
   ];
   for (const rule of validationRules) {
