@@ -413,6 +413,13 @@ declare class NUM {
      * @returns True if the value is in binary notation and allowed, false otherwise.
      */
     static onlyBinary(value: number, allowBinary: boolean): boolean;
+    /**
+     * Formats a number with a thousands separator (`,`).
+     * @param value The numeric value to format.
+     * @param useThousandSeparator Flag indicating whether to include a thousands separator.
+     * @returns The formatted number string.
+     */
+    static thousandSeparator(value: number, useThousandSeparator: boolean): string;
 }
 
 /**
@@ -508,6 +515,10 @@ interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
      * Indicates whether Binary values are allowed.
      */
     onlyBinary?: boolean;
+    /**
+     * Indicates whether thousand seperators are allowed.
+     */
+    thousandSeperator?: boolean;
 }
 /**
  * Represents the result of numeric value validation.
@@ -516,7 +527,7 @@ interface NumberValidationResult extends Result {
     /**
      * The validated numeric value.
      */
-    returnedNumber?: number;
+    returnedNumber?: any;
 }
 
 /**
@@ -546,6 +557,8 @@ interface NumberValidationResult extends Result {
  * @property {boolean} [onlyDecimal] - Flag indicating whether decimal numbers are allowed.
  *
  * @property {boolean} [onlyBinary] - Flag indicating whether binary number are allowed
+ *
+ * @property {boolean} [thousandSeparator] - Flag indicating whether thousand seperated number are allowed
  *
  * @property {string} [requiredError] - Error message for when a required number is not provided.
  *

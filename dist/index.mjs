@@ -529,6 +529,19 @@ var NUM = class {
       return true;
     }
   }
+  /**
+   * Formats a number with a thousands separator (`,`).
+   * @param value The numeric value to format.
+   * @param useThousandSeparator Flag indicating whether to include a thousands separator.
+   * @returns The formatted number string.
+   */
+  static thousandSeparator(value, useThousandSeparator) {
+    if (useThousandSeparator) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    } else {
+      return value.toString();
+    }
+  }
 };
 
 // src/validators/number-validator.ts
@@ -545,6 +558,7 @@ function validateNumber(value, options = {}) {
     maxDecimalPlaces = Infinity,
     minDecimalPlaces,
     onlyBinary,
+    thousandSeperator,
     // Error messages
     requiredError,
     minValueError,
@@ -570,6 +584,7 @@ function validateNumber(value, options = {}) {
     maxDecimalPlaces: Infinity,
     minDecimalPlaces,
     onlyBinary,
+    thousandSeperator,
     requiredError,
     minValueError,
     maxValueError,
@@ -640,6 +655,9 @@ Available options:
     {
       condition: onlyBinary && !NUM.onlyBinary(value, onlyBinary),
       message: binaryError || "Only binary are allowed"
+    },
+    {
+      condition: thousandSeperator && !NUM.thousandSeparator(value, thousandSeperator)
     }
   ];
   for (const rule of validationRules) {
@@ -650,9 +668,10 @@ Available options:
       };
     }
   }
+  let formattedNumber = thousandSeperator ? NUM.thousandSeparator(value, thousandSeperator) : value;
   return {
     isValid: true,
-    returnedNumber: value
+    returnedNumber: formattedNumber
   };
 }
 export {

@@ -177,13 +177,11 @@ available options:
 > maxDecimalPlaces,
 > minDecimalPlaces,
 > allowExponent,
-> onlyBinary (NEW!!!)
+> onlyBinary
+> thousandSeperator (NEW!!!)
 
 # Future
 
-> allowThousandSeparator
-> thousandSeparator
-> allowCustomSeparator
 > customSeparator
 > customValidationFn
 > allowCurrencySymbol
