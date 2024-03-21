@@ -407,12 +407,12 @@ declare class NUM {
      */
     static isValidMinDecimalPlaces(value: number, minDecimalPlaces: number): boolean;
     /**
-     * Checks if a numeric value is in scientific notation.
+     * Checks if a numeric value is in binary notation when allowBinary is true.
      * @param value The numeric value to check.
-     * @param allowExponent Flag indicating whether scientific notation is allowed.
-     * @returns True if the value is in scientific notation and allowed, false otherwise.
+     * @param allowBinary Flag indicating whether binary notation is allowed.
+     * @returns True if the value is in binary notation and allowed, false otherwise.
      */
-    static allowExponent(value: number, allowExponent: boolean): boolean;
+    static onlyBinary(value: number, allowBinary: boolean): boolean;
 }
 
 /**
@@ -460,9 +460,9 @@ interface NumberErrorMessage {
      */
     minDecimalError?: string;
     /**
-     * Error message for when scientific notation (exponent) is not allowed but present in the value.
+     * Error message for when the provided value is not a binary number.
      */
-    exponentError?: string;
+    binaryError?: string;
 }
 /**
  * Options for validating numeric values.
@@ -505,9 +505,9 @@ interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
      */
     minDecimalPlaces?: number;
     /**
-     * Indicates whether scientific notation (exponent) is allowed.
+     * Indicates whether Binary values are allowed.
      */
-    allowExponent?: boolean;
+    onlyBinary?: boolean;
 }
 /**
  * Represents the result of numeric value validation.
@@ -545,7 +545,7 @@ interface NumberValidationResult extends Result {
  *
  * @property {boolean} [onlyDecimal] - Flag indicating whether decimal numbers are allowed.
  *
- * @property {boolean} [allowExponent] - Flag indicating whether scientific notation is allowed.
+ * @property {boolean} [onlyBinary] - Flag indicating whether binary number are allowed
  *
  * @property {string} [requiredError] - Error message for when a required number is not provided.
  *
@@ -566,6 +566,8 @@ interface NumberValidationResult extends Result {
  * @property {string} [maxDecimalError] - Error message for when a numeric value exceeds the maximum allowed decimal places.
  *
  * @property {string} [minDecimalError] - Error message for when a numeric value falls below the minimum required decimal places.
+ *
+ * @property {string} [binaryError] - Error message for when a numeric value is not a binary number.
  *
  * @returns {NumberValidationResult} The validation result.
  */

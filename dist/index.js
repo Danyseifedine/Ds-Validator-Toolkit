@@ -546,16 +546,16 @@ var NUM = class {
     return decimalPortion.length >= minDecimalPlaces;
   }
   /**
-   * Checks if a numeric value is in scientific notation.
+   * Checks if a numeric value is in binary notation when allowBinary is true.
    * @param value The numeric value to check.
-   * @param allowExponent Flag indicating whether scientific notation is allowed.
-   * @returns True if the value is in scientific notation and allowed, false otherwise.
+   * @param allowBinary Flag indicating whether binary notation is allowed.
+   * @returns True if the value is in binary notation and allowed, false otherwise.
    */
-  static allowExponent(value, allowExponent) {
-    if (allowExponent) {
-      return /\d+\.?\d*e[+-]?\d+/i.test(value.toString());
+  static onlyBinary(value, allowBinary) {
+    if (allowBinary) {
+      return /^[01]+$/.test(value.toString());
     } else {
-      return !/\d+\.?\d*e[+-]?\d+/i.test(value.toString());
+      return true;
     }
   }
 };
@@ -573,7 +573,7 @@ function validateNumber(value, options = {}) {
     onlyDecimal = false,
     maxDecimalPlaces = Infinity,
     minDecimalPlaces,
-    allowExponent = true,
+    onlyBinary,
     // Error messages
     requiredError,
     minValueError,
@@ -585,7 +585,7 @@ function validateNumber(value, options = {}) {
     decimalError,
     maxDecimalError,
     minDecimalError,
-    exponentError
+    binaryError
   } = options;
   const validOptions = {
     isRequired: true,
@@ -598,7 +598,7 @@ function validateNumber(value, options = {}) {
     onlyDecimal: false,
     maxDecimalPlaces: Infinity,
     minDecimalPlaces,
-    allowExponent: true,
+    onlyBinary,
     requiredError,
     minValueError,
     maxValueError,
@@ -608,8 +608,7 @@ function validateNumber(value, options = {}) {
     zeroError,
     decimalError,
     maxDecimalError,
-    minDecimalError,
-    exponentError
+    minDecimalError
   };
   if (!NUM.isNumber(value)) {
     return {
@@ -668,8 +667,8 @@ Available options:
       message: minDecimalError || "Not enough decimal places provided."
     },
     {
-      condition: NUM.allowExponent(value, allowExponent),
-      message: exponentError || "Exponent not allowed"
+      condition: onlyBinary && !NUM.onlyBinary(value, onlyBinary),
+      message: binaryError || "Only binary are allowed"
     }
   ];
   for (const rule of validationRules) {

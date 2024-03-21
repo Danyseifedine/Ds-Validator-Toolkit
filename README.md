@@ -159,6 +159,11 @@ The _STR_ class provides various functions for string validation, making it easy
 
 ## What's New
 
+removed options:
+
+> allowHexadecimal
+> allowExponent
+
 available options:
 
 > isRequired,
@@ -171,14 +176,17 @@ available options:
 > onlyDecimal,
 > maxDecimalPlaces,
 > minDecimalPlaces,
-> allowExponent
+> allowExponent,
+> onlyBinary (NEW!!!)
 
 # Future
 
-> allowHexadecimal - Allows hexadecimal numeric values (e.g., 0xFF).
-> allowBinary - Allows binary numeric values (e.g., 0b101010).
-> allowOctal - Allows octal numeric values (e.g., 0o744).
-> allowThousandSeparator - Allows the use of a thousands separator (e.g., 1,000,000).
+> allowThousandSeparator
+> thousandSeparator
+> allowCustomSeparator
+> customSeparator
+> customValidationFn
+> allowCurrencySymbol
 
 ## Validators
 
