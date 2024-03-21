@@ -420,6 +420,13 @@ declare class NUM {
      * @returns The formatted number string.
      */
     static thousandSeparator(value: number, useThousandSeparator: boolean): string;
+    /**
+     * Formats a numeric value with a custom thousands separator.
+     * @param value The numeric value to format.
+     * @param separator The custom thousands separator to use.
+     * @returns The formatted number string.
+     */
+    static customThousandSeparator(value: number, separator: string): string;
 }
 
 /**
@@ -519,6 +526,10 @@ interface NumberValidatorOptions extends Requirement, NumberErrorMessage {
      * Indicates whether thousand seperators are allowed.
      */
     thousandSeperator?: boolean;
+    /**
+     * Add a custom thousand Seperator.
+     */
+    customThousandSeperator?: string;
 }
 /**
  * Represents the result of numeric value validation.
